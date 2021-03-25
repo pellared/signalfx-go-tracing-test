@@ -27,7 +27,7 @@
 
 [[constraint]]
   name = "github.com/signalfx/signalfx-go-tracing"
-  version = "1.6.2"
+  revision = "6e7251eb17c771e5e220a35920473e59209ab9af"
 
 [[constraint]]
   name = "go.mongodb.org/mongo-driver"

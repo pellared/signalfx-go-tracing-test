@@ -136,7 +136,7 @@
   version = "v2.5.1"
 
 [[projects]]
-  digest = "1:09ca2a6e59aac4c0767bf7456179f8f641c644c56d5cf838d238f1ae65b83485"
+  digest = "1:645d8bcc689ea99cb6532e62cc322c3c5b70212625ef2e5ed03ed530719d0cb6"
   name = "github.com/signalfx/signalfx-go-tracing"
   packages = [
     ".",
@@ -148,8 +148,7 @@
     "internal/globalconfig",
   ]
   pruneopts = "UT"
-  revision = "34b85a952a703510be378004b250ae1908d19d38"
-  version = "v1.6.2"
+  revision = "6e7251eb17c771e5e220a35920473e59209ab9af"
 
 [[projects]]
   digest = "1:75eaf5b138dc28e6e18181453cf0b4a34f1b14c650d6fc7c70d343cc23f41963"
