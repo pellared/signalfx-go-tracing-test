@@ -1,36 +1,39 @@
 package main
 
 import (
-	"context"
 	"log"
-	"net/http"
-	"time"
 
-	mongotrace "github.com/signalfx/signalfx-go-tracing/contrib/mongodb/mongo-go-driver/mongo"
-	httptrace "github.com/signalfx/signalfx-go-tracing/contrib/net/http"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/labstack/echo/v4"
+
+	echoinstr "github.com/signalfx/signalfx-go-tracing/contrib/labstack/echo.v4"
+	"github.com/signalfx/signalfx-go-tracing/ddtrace/tracer"
 )
 
 func main() {
-	mux := httptrace.NewServeMux()
-	mux.HandleFunc("/", handler)
-	if err := http.ListenAndServe("localhost:8888", mux); err != nil {
-		log.Println(err)
-	}
-}
+	r := echo.New()
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	opts := options.Client()
-	opts.SetMonitor(mongotrace.NewMonitor())
-	c, err := mongo.Connect(ctx, opts.ApplyURI("mongodb://localhost:27017"))
-	if err != nil {
-		log.Println(err)
-	}
-	ctx, cancel := context.WithTimeout(ctx, time.Second)
-	defer cancel()
-	if _, err := c.ListDatabases(ctx, nil); err != nil {
-		log.Println(err)
+	// Use the tracer middleware with your desired service name.
+	r.Use(echoinstr.Middleware(echoinstr.WithServiceName("my-web-app")))
+
+	// Set up an endpoint.
+	r.GET("/hello", func(c echo.Context) error {
+		return c.String(200, "hello world!")
+	})
+
+	r.GET("/image/encode", func(c echo.Context) error {
+		// create a child span to track an operation
+		span, _ := tracer.StartSpanFromContext(c.Request().Context(), "image.encode")
+
+		// encode an image ...
+
+		// finish the child span
+		span.Finish()
+
+		return c.String(200, "ok!")
+	})
+
+	// ...and listen for incoming requests
+	if err := r.Start(":8080"); err != nil {
+		log.Fatal(err)
 	}
 }
